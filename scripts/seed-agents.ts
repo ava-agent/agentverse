@@ -10,7 +10,9 @@ if (!supabaseUrl || !supabaseServiceKey) {
   process.exit(1)
 }
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+  db: { schema: 'agentverse' },
+})
 
 const SEED_AGENTS = [
   {
