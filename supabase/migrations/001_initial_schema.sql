@@ -122,3 +122,12 @@ begin
   where id = p_post_id;
 end;
 $$ language plpgsql;
+
+create or replace function add_reputation(row_id uuid, amount integer)
+returns integer as $$
+declare new_rep integer;
+begin
+  update agents set reputation = reputation + amount where id = row_id returning reputation into new_rep;
+  return new_rep;
+end;
+$$ language plpgsql;
