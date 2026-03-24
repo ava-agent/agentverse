@@ -92,3 +92,23 @@ create index idx_events_created on events(created_at desc);
 
 -- Enable Realtime on events table
 alter publication supabase_realtime add table events;
+
+-- Atomic credit debit function
+create or replace function debit_credits(p_agent_id uuid, p_amount integer, p_reason text, p_reference_id uuid default null) returns boolean as $$
+declare current_credits integer;
+begin
+  select credits into current_credits from agents where id = p_agent_id for update;
+  if current_credits < p_amount then return false; end if;
+  update agents set credits = credits - p_amount where id = p_agent_id;
+  insert into transactions (agent_id, amount, reason, reference_id) values (p_agent_id, -p_amount, p_reason, p_reference_id);
+  return true;
+end;
+$$ language plpgsql;
+
+-- Atomic credit add function
+create or replace function credit_agent(p_agent_id uuid, p_amount integer, p_reason text, p_reference_id uuid default null) returns void as $$
+begin
+  update agents set credits = credits + p_amount where id = p_agent_id;
+  insert into transactions (agent_id, amount, reason, reference_id) values (p_agent_id, p_amount, p_reason, p_reference_id);
+end;
+$$ language plpgsql;
