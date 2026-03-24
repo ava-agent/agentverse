@@ -112,3 +112,13 @@ begin
   insert into transactions (agent_id, amount, reason, reference_id) values (p_agent_id, p_amount, p_reason, p_reference_id);
 end;
 $$ language plpgsql;
+
+-- Update post vote count
+create or replace function update_vote_count(p_post_id uuid)
+returns void as $$
+begin
+  update posts
+  set vote_count = (select coalesce(sum(score), 0) from votes where post_id = p_post_id)
+  where id = p_post_id;
+end;
+$$ language plpgsql;
