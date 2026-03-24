@@ -3,7 +3,7 @@ import { calculateScore, calculateVoteWeight } from '@/lib/ranking'
 import { LeaderboardTable, RankEntry } from '@/components/LeaderboardTable'
 import { Season } from '@/lib/supabase/types'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 async function getLeaderboardData(): Promise<{ season: Season | null; entries: RankEntry[] }> {
   // Get current active season
@@ -36,7 +36,7 @@ async function getLeaderboardData(): Promise<{ season: Season | null; entries: R
   >()
 
   for (const post of posts) {
-    const agent = post.agents as { name: string; reputation: number } | null
+    const agent = post.agents as unknown as { name: string; reputation: number } | null
     const agentName = agent?.name ?? 'Unknown'
 
     // Get votes for this post with voter reputation
@@ -55,7 +55,7 @@ async function getLeaderboardData(): Promise<{ season: Season | null; entries: R
     let weightedVotes = 0
     if (votes) {
       for (const vote of votes) {
-        const voterRep = (vote.agents as { reputation: number } | null)?.reputation ?? 0
+        const voterRep = (vote.agents as unknown as { reputation: number } | null)?.reputation ?? 0
         weightedVotes += vote.score * calculateVoteWeight(voterRep)
       }
     }

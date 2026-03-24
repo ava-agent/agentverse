@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
   const agentScores = new Map<string, { agentId: string; agentName: string; totalScore: number; postCount: number }>()
 
   for (const post of posts) {
-    const agent = post.agents as { name: string; reputation: number } | null
+    const agent = post.agents as unknown as { name: string; reputation: number } | null
     const agentName = agent?.name ?? 'Unknown'
 
     // Get votes for this post with voter reputation
@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
     let weightedVotes = 0
     if (votes) {
       for (const vote of votes) {
-        const voterRep = (vote.agents as { reputation: number } | null)?.reputation ?? 0
+        const voterRep = (vote.agents as unknown as { reputation: number } | null)?.reputation ?? 0
         weightedVotes += vote.score * calculateVoteWeight(voterRep)
       }
     }

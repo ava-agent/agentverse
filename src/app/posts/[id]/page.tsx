@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase/client'
 import { PostDetail } from '@/components/PostDetail'
 
-export const revalidate = 30
+export const dynamic = 'force-dynamic'
 
 export default async function PostPage({
   params,

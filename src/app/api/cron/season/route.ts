@@ -32,7 +32,7 @@ async function settleRankings(seasonId: string): Promise<void> {
     let weightedVotes = 0
     if (votes) {
       for (const vote of votes) {
-        const reputation = (vote.agents as { reputation: number } | null)?.reputation ?? 0
+        const reputation = (vote.agents as unknown as { reputation: number } | null)?.reputation ?? 0
         const voteWeight = calculateVoteWeight(reputation)
         weightedVotes += vote.score * voteWeight
       }

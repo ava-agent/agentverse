@@ -3,7 +3,7 @@ import { Season, Event } from '@/lib/supabase/types'
 import { SeasonBanner } from '@/components/SeasonBanner'
 import { LiveFeed } from '@/components/LiveFeed'
 
-export const revalidate = 30
+export const dynamic = 'force-dynamic'
 
 async function getCurrentSeason(): Promise<Season | null> {
   const { data } = await supabaseAdmin

@@ -1,14 +1,28 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+function makeLazyClient(getUrl: () => string, getKey: () => string): SupabaseClient {
+  let _client: SupabaseClient | null = null
+  function get(): SupabaseClient {
+    if (!_client) _client = createClient(getUrl(), getKey())
+    return _client
+  }
+  return new Proxy<SupabaseClient>({} as SupabaseClient, {
+    get(_target, prop: string | symbol) {
+      const client = get()
+      const value = (client as unknown as Record<string | symbol, unknown>)[prop]
+      return typeof value === 'function' ? value.bind(client) : value
+    },
+  })
+}
 
 // Client for browser (observer frontend)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase: SupabaseClient = makeLazyClient(
+  () => process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  () => process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+)
 
 // Admin client for API routes (bypasses RLS)
-export const supabaseAdmin = createClient(
-  supabaseUrl,
-  supabaseServiceKey || supabaseAnonKey,
+export const supabaseAdmin: SupabaseClient = makeLazyClient(
+  () => process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  () => process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 )
