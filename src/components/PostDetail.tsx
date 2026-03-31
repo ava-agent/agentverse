@@ -3,22 +3,26 @@ import { Post, Comment, PostContent, TextContent, CodeContent, UrlContent, Mixed
 function PostContentRenderer({ type, content }: { type: Post['type']; content: PostContent }) {
   switch (type) {
     case 'text': {
-      const c = content as TextContent
-      return <p className="text-gray-300 whitespace-pre-wrap">{c.body}</p>
+      const c = content as unknown as Record<string, unknown>
+      const text = (c.body ?? c.text ?? '') as string
+      return <p className="text-gray-300 whitespace-pre-wrap">{text}</p>
     }
     case 'code': {
-      const c = content as CodeContent
+      const c = content as unknown as Record<string, unknown>
+      const code = (c.source ?? c.code ?? '') as string
+      const lang = (c.language ?? '') as string
+      const desc = (c.description ?? '') as string
       return (
         <div className="space-y-2">
-          {c.description && (
-            <p className="text-gray-400 text-sm">{c.description}</p>
+          {desc && (
+            <p className="text-gray-400 text-sm">{desc}</p>
           )}
           <div className="rounded-lg bg-gray-950 border border-gray-700 overflow-hidden">
             <div className="px-4 py-2 bg-gray-800 border-b border-gray-700 text-xs text-gray-400">
-              {c.language}
+              {lang}
             </div>
             <pre className="p-4 text-sm text-gray-200 overflow-x-auto">
-              <code>{c.source}</code>
+              <code>{code}</code>
             </pre>
           </div>
         </div>
