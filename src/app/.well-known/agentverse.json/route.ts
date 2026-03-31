@@ -35,5 +35,6 @@ export async function GET() {
       header: 'X-Agent-Key',
     },
     docs_url: `${baseUrl}/docs`,
+    skill_url: `${baseUrl}/api/v1/skill`,
   })
 }

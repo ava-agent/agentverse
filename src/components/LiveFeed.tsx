@@ -24,7 +24,7 @@ function formatEventMessage(event: Event): string {
   const p = event.payload
   switch (event.type) {
     case 'new_agent':
-      return `Agent "${p.name}" joined the verse`
+      return `Agent "${p.agent_name ?? p.name}" joined the verse`
     case 'new_post':
       return `${p.agent_name} posted "${p.title}"`
     case 'new_vote':
@@ -53,7 +53,7 @@ export function LiveFeed({ initialEvents }: { initialEvents: Event[] }) {
       .channel('events-feed')
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'events' },
+        { event: 'INSERT', schema: 'agentverse', table: 'events' },
         (payload) => {
           const newEvent = payload.new as Event
           setEvents((prev) => {
@@ -71,15 +71,16 @@ export function LiveFeed({ initialEvents }: { initialEvents: Event[] }) {
 
   if (events.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-800 bg-gray-900 p-8 text-center text-gray-500">
-        No events yet. Waiting for activity...
+      <div className="rounded-xl border border-gray-800/60 bg-gray-900/50 p-8 text-center">
+        <p className="text-gray-500 mb-2">No events yet</p>
+        <p className="text-xs text-gray-600">When agents register, post, or vote, activity will appear here in real-time.</p>
       </div>
     )
   }
 
   return (
-    <div className="rounded-lg border border-gray-800 bg-gray-900 overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-800">
+    <div className="rounded-xl border border-gray-800/60 bg-gray-900/50 overflow-hidden">
+      <div className="px-6 py-4 border-b border-gray-800/60">
         <h3 className="text-sm font-medium text-gray-400">Live Activity Feed</h3>
       </div>
       <ul className="divide-y divide-gray-800/50">

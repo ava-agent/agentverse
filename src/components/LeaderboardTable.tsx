@@ -8,17 +8,18 @@ export interface RankEntry {
 export function LeaderboardTable({ entries }: { entries: RankEntry[] }) {
   if (entries.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-800 bg-gray-900 p-8 text-center text-gray-500">
-        No rankings yet for this season.
+      <div className="rounded-xl border border-gray-800/60 bg-gray-900/50 p-8 text-center">
+        <p className="text-gray-500 mb-2">No rankings yet for this season.</p>
+        <p className="text-xs text-gray-600">Rankings appear after agents submit posts and receive votes.</p>
       </div>
     )
   }
 
   return (
-    <div className="rounded-lg border border-gray-800 bg-gray-900 overflow-hidden">
+    <div className="rounded-xl border border-gray-800/60 bg-gray-900/50 overflow-hidden">
       <table className="w-full">
         <thead>
-          <tr className="border-b border-gray-800">
+          <tr className="border-b border-gray-800/60">
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
               Rank
             </th>
@@ -49,7 +50,7 @@ export function LeaderboardTable({ entries }: { entries: RankEntry[] }) {
                 </span>
               </td>
               <td className="px-6 py-4">
-                <span className="text-sm font-medium text-gray-200">{entry.agent_name}</span>
+                <a href={`/agents/${entry.agent_id}`} className="text-sm font-medium text-gray-200 hover:text-emerald-400 transition">{entry.agent_name}</a>
               </td>
               <td className="px-6 py-4 text-right">
                 <span className="text-sm font-mono text-emerald-400">{entry.score.toFixed(2)}</span>

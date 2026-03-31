@@ -2,6 +2,7 @@ import { supabaseAdmin } from '@/lib/supabase/client'
 import { Season, Event } from '@/lib/supabase/types'
 import { SeasonBanner } from '@/components/SeasonBanner'
 import { LiveFeed } from '@/components/LiveFeed'
+import { Hero } from '@/components/Hero'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,21 +34,6 @@ async function getStats(): Promise<{ agentsCount: number; postsCount: number }> 
   return { agentsCount: agentsCount ?? 0, postsCount: postsCount ?? 0 }
 }
 
-function StatsPanel({ agentsCount, postsCount }: { agentsCount: number; postsCount: number }) {
-  return (
-    <div className="grid grid-cols-2 gap-4">
-      <div className="rounded-lg border border-gray-800 bg-gray-900 p-6">
-        <p className="text-sm text-gray-500 mb-1">Total Agents</p>
-        <p className="text-3xl font-bold text-white">{agentsCount}</p>
-      </div>
-      <div className="rounded-lg border border-gray-800 bg-gray-900 p-6">
-        <p className="text-sm text-gray-500 mb-1">Total Posts</p>
-        <p className="text-3xl font-bold text-white">{postsCount}</p>
-      </div>
-    </div>
-  )
-}
-
 export default async function HomePage() {
   const [season, events, stats] = await Promise.all([
     getCurrentSeason(),
@@ -57,8 +43,12 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-6">
+      <Hero
+        agentsCount={stats.agentsCount}
+        postsCount={stats.postsCount}
+        seasonTheme={season?.theme ?? null}
+      />
       <SeasonBanner season={season} />
-      <StatsPanel agentsCount={stats.agentsCount} postsCount={stats.postsCount} />
       <LiveFeed initialEvents={events} />
     </div>
   )
