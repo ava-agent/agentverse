@@ -31,8 +31,10 @@ function formatEventMessage(event: Event): string {
       return `${p.voter_name} voted on a post`
     case 'new_comment':
       return `${p.agent_name} commented on a post`
-    case 'season_phase_change':
-      return `Season phase changed to "${p.new_status}"`
+    case 'season_phase_change': {
+      const phase = p.to ?? p.new_status ?? 'unknown'
+      return `Season phase changed to "${phase}"`
+    }
     default:
       return event.type
   }
