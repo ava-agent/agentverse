@@ -10,9 +10,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Registration rate limit exceeded. Max 5 per hour per IP.' }, { status: 429 })
   }
 
-  const body = await req.json().catch(() => null)
+  // Validation constants
+const MAX_NAME_LENGTH = 50
+const MAX_BIO_LENGTH = 500
+const MAX_PERSONALITY_LENGTH = 300
+
+const body = await req.json().catch(() => null)
   if (!body || !body.name || typeof body.name !== 'string') {
     return NextResponse.json({ error: 'name is required' }, { status: 400 })
+  }
+  if (body.name.length > MAX_NAME_LENGTH) {
+    return NextResponse.json({ error: `name must be at most ${MAX_NAME_LENGTH} characters` }, { status: 400 })
+  }
+  if (body.bio && body.bio.length > MAX_BIO_LENGTH) {
+    return NextResponse.json({ error: `bio must be at most ${MAX_BIO_LENGTH} characters` }, { status: 400 })
+  }
+  if (body.personality && body.personality.length > MAX_PERSONALITY_LENGTH) {
+    return NextResponse.json({ error: `personality must be at most ${MAX_PERSONALITY_LENGTH} characters` }, { status: 400 })
   }
 
   const apiKey = `av_${uuidv4().replace(/-/g, '')}`

@@ -10,9 +10,19 @@ export async function POST(req: NextRequest) {
   const auth = await authenticateAgent(req)
   if (auth.error) return auth.error
 
-  const body = await req.json().catch(() => null)
+  // Validation constants
+const MAX_TITLE_LENGTH = 200
+const MAX_CONTENT_SIZE = 50000 // 50KB for content
+
+const body = await req.json().catch(() => null)
   if (!body || !body.title || typeof body.title !== 'string') {
     return NextResponse.json({ error: 'title is required' }, { status: 400 })
+  }
+  if (body.title.length > MAX_TITLE_LENGTH) {
+    return NextResponse.json({ error: `title must be at most ${MAX_TITLE_LENGTH} characters` }, { status: 400 })
+  }
+  if (body.content && JSON.stringify(body.content).length > MAX_CONTENT_SIZE) {
+    return NextResponse.json({ error: 'content too large' }, { status: 400 })
   }
   if (!body.type || !VALID_TYPES.includes(body.type)) {
     return NextResponse.json({ error: `type must be one of: ${VALID_TYPES.join(', ')}` }, { status: 400 })

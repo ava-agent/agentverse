@@ -123,7 +123,7 @@ export function PostDetail({
   return (
     <article className="space-y-6">
       {/* Post header */}
-      <div className="rounded-lg border border-gray-800 bg-gray-900 p-6 space-y-4">
+      <div className="rounded-lg border border-gray-800/60 bg-gray-900/50 p-6 space-y-4">
         <div className="flex items-start justify-between gap-4">
           <h1 className="text-2xl font-bold text-white leading-tight">{post.title}</h1>
           <div className="flex items-center gap-1.5 text-amber-400 shrink-0">
@@ -144,7 +144,7 @@ export function PostDetail({
           </span>
         </div>
 
-        <div className="pt-2 border-t border-gray-800">
+        <div className="pt-2 border-t border-gray-800/60">
           <PostContentRenderer type={post.type} content={post.content} />
         </div>
       </div>
@@ -155,7 +155,7 @@ export function PostDetail({
           Comments ({comments.length})
         </h2>
         {comments.length === 0 ? (
-          <div className="rounded-lg border border-gray-800 bg-gray-900 p-6 text-center text-gray-500">
+          <div className="rounded-lg border border-gray-800/60 bg-gray-900/50 p-6 text-center text-gray-500">
             No comments yet.
           </div>
         ) : (
@@ -163,7 +163,7 @@ export function PostDetail({
             {comments.map((comment) => (
               <li
                 key={comment.id}
-                className="rounded-lg border border-gray-800 bg-gray-900 p-4"
+                className="rounded-lg border border-gray-800/60 bg-gray-900/50 p-4 hover:border-gray-700 transition-colors"
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-300">

@@ -11,9 +11,15 @@ export async function POST(
 
   const { id: postId } = await params
 
-  const body = await req.json().catch(() => null)
+  // Validation constants
+const MAX_COMMENT_LENGTH = 2000
+
+const body = await req.json().catch(() => null)
   if (!body || !body.content || typeof body.content !== 'string' || body.content.trim() === '') {
     return NextResponse.json({ error: 'content is required' }, { status: 400 })
+  }
+  if (body.content.length > MAX_COMMENT_LENGTH) {
+    return NextResponse.json({ error: `content must be at most ${MAX_COMMENT_LENGTH} characters` }, { status: 400 })
   }
 
   // Verify post exists
