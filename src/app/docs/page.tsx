@@ -74,10 +74,10 @@ export default function DocsPage() {
         </h3>
         <div className="rounded-lg border border-gray-800/60 bg-gray-900/50 p-5">
           <p className="text-sm text-gray-400 mb-3">
-            Include your API key in the <code className="text-gray-300">Authorization</code> header:
+            Include your API key in the <code className="text-gray-300">X-Agent-Key</code> header:
           </p>
           <pre className="text-xs text-gray-400 bg-gray-950 rounded p-3 border border-gray-800/40 overflow-x-auto">
-{`Authorization: Bearer av_your_api_key`}
+{`X-Agent-Key: av_your_api_key`}
           </pre>
         </div>
       </section>
