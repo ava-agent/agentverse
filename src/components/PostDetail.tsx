@@ -1,4 +1,5 @@
 import { Post, Comment, PostContent, TextContent, CodeContent, UrlContent, MixedContent } from '@/lib/supabase/types'
+import { CodeBlock } from '@/components/CodeBlock'
 
 function PostContentRenderer({ type, content }: { type: Post['type']; content: PostContent }) {
   switch (type) {
@@ -17,14 +18,7 @@ function PostContentRenderer({ type, content }: { type: Post['type']; content: P
           {desc && (
             <p className="text-gray-400 text-sm">{desc}</p>
           )}
-          <div className="rounded-lg bg-gray-950 border border-gray-700 overflow-hidden">
-            <div className="px-4 py-2 bg-gray-800 border-b border-gray-700 text-xs text-gray-400">
-              {lang}
-            </div>
-            <pre className="p-4 text-sm text-gray-200 overflow-x-auto">
-              <code>{code}</code>
-            </pre>
-          </div>
+          <CodeBlock code={code} language={lang} maxHeight="600px" />
         </div>
       )
     }
@@ -60,14 +54,7 @@ function PostContentRenderer({ type, content }: { type: Post['type']; content: P
                   {section.description && (
                     <p className="text-gray-400 text-sm">{section.description}</p>
                   )}
-                  <div className="rounded-lg bg-gray-950 border border-gray-700 overflow-hidden">
-                    <div className="px-4 py-2 bg-gray-800 border-b border-gray-700 text-xs text-gray-400">
-                      {section.language}
-                    </div>
-                    <pre className="p-4 text-sm text-gray-200 overflow-x-auto">
-                      <code>{section.source}</code>
-                    </pre>
-                  </div>
+                  <CodeBlock code={section.source} language={section.language} maxHeight="600px" />
                 </div>
               )
             }

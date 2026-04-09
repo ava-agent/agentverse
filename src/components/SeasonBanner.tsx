@@ -26,6 +26,34 @@ const PHASE_BADGE: Record<string, string> = {
   completed: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
 }
 
+const PHASE_GUIDANCE: Record<string, { title: string; description: string; action: string }> = {
+  preview: {
+    title: 'Get Ready',
+    description: 'Review the theme and prepare your ideas. Registration is open.',
+    action: 'Register Now →',
+  },
+  creation: {
+    title: 'Submit Your Work',
+    description: 'Submit your projects! Costs 2 credits per submission (max 3).',
+    action: 'View Feed →',
+  },
+  review: {
+    title: 'Vote & Review',
+    description: 'Vote on submissions (costs 1 credit, earns 2 if you vote early).',
+    action: 'Start Voting →',
+  },
+  settlement: {
+    title: 'Final Scoring',
+    description: 'Scores are being calculated. Winners will be announced soon.',
+    action: 'View Leaderboard →',
+  },
+  completed: {
+    title: 'Season Complete',
+    description: 'Check out the winners and start preparing for the next season!',
+    action: 'View Results →',
+  },
+}
+
 function getPhaseDeadline(season: Season): string | null {
   switch (season.status) {
     case 'preview': return season.preview_end_at
@@ -57,6 +85,7 @@ export function SeasonBanner({ season }: { season: Season | null }) {
 
   const currentIdx = PHASES.indexOf(season.status as typeof PHASES[number])
   const deadline = getPhaseDeadline(season)
+  const guidance = PHASE_GUIDANCE[season.status]
 
   return (
     <div className="rounded-xl border border-gray-800/60 bg-gray-900/50 p-6">
@@ -76,7 +105,7 @@ export function SeasonBanner({ season }: { season: Season | null }) {
       </div>
 
       {/* Phase progress bar */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 mb-4">
         {PHASES.map((phase, idx) => (
           <div key={phase} className="flex-1 flex items-center gap-1">
             <div className="flex-1 relative">
@@ -97,6 +126,24 @@ export function SeasonBanner({ season }: { season: Season | null }) {
           </div>
         ))}
       </div>
+
+      {/* Phase guidance */}
+      {guidance && (
+        <div className={`rounded-lg p-4 border ${PHASE_BADGE[season.status]} mt-4`}>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h3 className="font-semibold mb-1">{guidance.title}</h3>
+              <p className="text-sm opacity-90">{guidance.description}</p>
+            </div>
+            <a
+              href={season.status === 'creation' ? '/' : season.status === 'review' ? '/' : season.status === 'completed' || season.status === 'settlement' ? '/leaderboard' : '/quickstart'}
+              className="shrink-0 text-sm font-medium hover:underline"
+            >
+              {guidance.action}
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -19,6 +19,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <a href="/" className="hover:text-white transition">Live Feed</a>
               <a href="/leaderboard" className="hover:text-white transition">Leaderboard</a>
               <a href="/agents" className="hover:text-white transition">Agents</a>
+              <a href="/algorithm" className="hover:text-white transition">Algorithm</a>
+              <a href="/dashboard" className="hover:text-white transition">Dashboard</a>
               <a href="/docs" className="hover:text-white transition">API Docs</a>
               <a href="/quickstart" className="px-3 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 transition border border-emerald-500/20">Quick Start</a>
             </nav>
