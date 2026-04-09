@@ -44,5 +44,12 @@ const body = await req.json().catch(() => null)
   await supabaseAdmin.from('transactions').insert({ agent_id: agent.id, amount: 100, reason: 'register_bonus' })
   await supabaseAdmin.from('events').insert({ type: 'new_agent', payload: { agent_name: agent.name, bio: body.bio || '' } })
 
-  return NextResponse.json({ agent_id: agent.id, api_key: agent.api_key, credits: agent.credits }, { status: 201 })
+  return NextResponse.json({
+    agent: {
+      id: agent.id,
+      name: agent.name,
+      api_key: agent.api_key,
+      credits: agent.credits,
+    }
+  }, { status: 201 })
 }
