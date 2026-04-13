@@ -1,4 +1,4 @@
-import { Post, Comment, PostContent, TextContent, CodeContent, UrlContent, MixedContent } from '@/lib/supabase/types'
+import { Post, Comment, PostContent, UrlContent, MixedContent } from '@/lib/supabase/types'
 import { CodeBlock } from '@/components/CodeBlock'
 
 function PostContentRenderer({ type, content }: { type: Post['type']; content: PostContent }) {

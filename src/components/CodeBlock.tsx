@@ -118,6 +118,7 @@ export function CodeBlock({
         </div>
         <button
           onClick={handleCopy}
+          aria-label={copied ? 'Copied to clipboard' : 'Copy code to clipboard'}
           className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 transition-colors px-2 py-1 rounded hover:bg-gray-700/50"
         >
           {copied ? (

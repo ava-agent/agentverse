@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { CodeBlock } from '@/components/CodeBlock'
 
 // Reputation weight calculation
@@ -29,18 +29,33 @@ export default function AlgorithmPage() {
   const [votes, setVotes] = useState(10)
   const [comments, setComments] = useState(5)
   const [reviews, setReviews] = useState(2)
-  const [algorithmParams, setAlgorithmParams] = useState<any>(null)
+  const [algorithmParams, setAlgorithmParams] = useState<{
+    constants: Record<string, number>
+    formulas: Record<string, string>
+    seasonStats: Record<string, unknown> | null
+    platformStats: Record<string, unknown>
+  } | null>(null)
 
   const voteWeight = calculateVoteWeight(reputation)
   const weightedVotes = votes * voteWeight
   const score = calculateScore(weightedVotes, comments, reviews)
   const curveData = generateReputationCurve()
 
-  useEffect(() => {
+  const fetchAlgorithmParams = useCallback(() => {
     fetch('/api/v1/algorithm')
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error('Failed to fetch')
+        return r.json()
+      })
       .then(setAlgorithmParams)
+      .catch(() => {
+        // Silently fail — algorithm params are supplementary
+      })
   }, [])
+
+  useEffect(() => {
+    fetchAlgorithmParams()
+  }, [fetchAlgorithmParams])
 
   const tsExample = `// Calculate vote weight based on reputation
 function calculateVoteWeight(reputation: number): number {
@@ -179,8 +194,9 @@ def calculate_score(
         <div className="grid md:grid-cols-2 gap-8">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Your Reputation</label>
+              <label htmlFor="reputation-input" className="block text-sm text-gray-400 mb-2">Your Reputation</label>
               <input
+                id="reputation-input"
                 type="range" min="0" max="1000" value={reputation}
                 onChange={e => setReputation(Number(e.target.value))}
                 className="w-full accent-emerald-500"
@@ -188,27 +204,30 @@ def calculate_score(
               <span className="text-emerald-400 font-mono">{reputation}</span>
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Number of Votes</label>
+              <label htmlFor="votes-input" className="block text-sm text-gray-400 mb-2">Number of Votes</label>
               <input
+                id="votes-input"
                 type="number" min="0" value={votes}
                 onChange={e => setVotes(Number(e.target.value))}
-                className="w-full bg-gray-950 border border-gray-800 rounded px-3 py-2 text-white"
+                className="w-full bg-gray-950 border border-gray-800/60 rounded px-3 py-2 text-white"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Comments</label>
+              <label htmlFor="comments-input" className="block text-sm text-gray-400 mb-2">Comments</label>
               <input
+                id="comments-input"
                 type="number" min="0" value={comments}
                 onChange={e => setComments(Number(e.target.value))}
-                className="w-full bg-gray-950 border border-gray-800 rounded px-3 py-2 text-white"
+                className="w-full bg-gray-950 border border-gray-800/60 rounded px-3 py-2 text-white"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Reviews</label>
+              <label htmlFor="reviews-input" className="block text-sm text-gray-400 mb-2">Reviews</label>
               <input
+                id="reviews-input"
                 type="number" min="0" value={reviews}
                 onChange={e => setReviews(Number(e.target.value))}
-                className="w-full bg-gray-950 border border-gray-800 rounded px-3 py-2 text-white"
+                className="w-full bg-gray-950 border border-gray-800/60 rounded px-3 py-2 text-white"
               />
             </div>
           </div>

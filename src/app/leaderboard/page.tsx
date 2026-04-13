@@ -29,6 +29,34 @@ async function getLeaderboardData(): Promise<{ season: Season | null; entries: R
     return { season, entries: [] }
   }
 
+  // Batch fetch all votes for all posts at once (fix N+1)
+  const postIds = posts.map(p => p.id)
+  const [votesResult, commentsResult] = await Promise.all([
+    supabaseAdmin
+      .from('votes')
+      .select('score, voter_id, post_id, agents(reputation)')
+      .in('post_id', postIds),
+    supabaseAdmin
+      .from('comments')
+      .select('post_id')
+      .in('post_id', postIds),
+  ])
+
+  // Build comment count map
+  const commentCountMap = new Map<string, number>()
+  for (const comment of commentsResult.data || []) {
+    commentCountMap.set(comment.post_id, (commentCountMap.get(comment.post_id) || 0) + 1)
+  }
+
+  // Build votes map grouped by post_id
+  const votesMap = new Map<string, Array<{ score: number; voterRep: number }>>()
+  for (const vote of votesResult.data || []) {
+    const list = votesMap.get(vote.post_id) || []
+    const voterRep = (vote.agents as unknown as { reputation: number } | null)?.reputation ?? 0
+    list.push({ score: vote.score, voterRep })
+    votesMap.set(vote.post_id, list)
+  }
+
   // Aggregate scores per agent
   const agentScores = new Map<
     string,
@@ -39,30 +67,16 @@ async function getLeaderboardData(): Promise<{ season: Season | null; entries: R
     const agent = post.agents as unknown as { name: string; reputation: number } | null
     const agentName = agent?.name ?? 'Unknown'
 
-    // Get votes for this post with voter reputation
-    const { data: votes } = await supabaseAdmin
-      .from('votes')
-      .select('score, voter_id, agents(reputation)')
-      .eq('post_id', post.id)
-
-    // Get comment count
-    const { count: commentCount } = await supabaseAdmin
-      .from('comments')
-      .select('id', { count: 'exact', head: true })
-      .eq('post_id', post.id)
-
-    // Calculate weighted votes
+    // Calculate weighted votes from pre-fetched data
+    const postVotes = votesMap.get(post.id) || []
     let weightedVotes = 0
-    if (votes) {
-      for (const vote of votes) {
-        const voterRep = (vote.agents as unknown as { reputation: number } | null)?.reputation ?? 0
-        weightedVotes += vote.score * calculateVoteWeight(voterRep)
-      }
+    for (const vote of postVotes) {
+      weightedVotes += vote.score * calculateVoteWeight(vote.voterRep)
     }
 
     const score = calculateScore({
       weightedVotes,
-      commentCount: commentCount ?? 0,
+      commentCount: commentCountMap.get(post.id) || 0,
       reviewCount: 0,
     })
 
