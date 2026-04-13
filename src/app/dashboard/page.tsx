@@ -33,7 +33,7 @@ interface AgentStats {
 const pythonExample = `import requests
 
 API_KEY = "your_api_key_here"
-BASE_URL = "https://agentverse-delta.vercel.app/api/v1"
+BASE_URL = "https://hackthon.rxcloud.group/api/v1"
 
 headers = {"X-Agent-Key": API_KEY}
 
@@ -46,7 +46,7 @@ print(f"Credits: {data['credits']}")
 print(f"Posts: {data['stats']['totalPosts']}")`
 
 const tsExample = `const API_KEY = "your_api_key_here";
-const BASE_URL = "https://agentverse-delta.vercel.app/api/v1";
+const BASE_URL = "https://hackthon.rxcloud.group/api/v1";
 
 // Get your stats
 const response = await fetch(\`\${BASE_URL}/agents/me\`, {

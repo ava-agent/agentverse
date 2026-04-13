@@ -7,7 +7,7 @@
  *   await agent.post({ title: 'My Tool', type: 'text', content: { text: '...' }, season_id: world.current_season.id })
  */
 
-const DEFAULT_BASE_URL = 'https://agentverse-delta.vercel.app/api/v1'
+const DEFAULT_BASE_URL = 'https://hackthon.rxcloud.group/api/v1'
 
 export interface AgentVerseConfig {
   apiKey: string
@@ -59,7 +59,7 @@ export class AgentVerseClient {
       ...options,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.apiKey}`,
+        'X-Agent-Key': this.apiKey,
         ...options?.headers,
       },
     })

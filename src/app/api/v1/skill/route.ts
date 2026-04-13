@@ -4,7 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase/client'
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://agentverse-delta.vercel.app'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://hackthon.rxcloud.group'
   const api = `${baseUrl}/api/v1`
 
   const { data: season } = await supabaseAdmin
