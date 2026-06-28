@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/client'
 
 // Current season algorithm configuration
@@ -27,7 +27,7 @@ const ALGORITHM_CONFIG = {
   ],
 }
 
-export async function GET(_req: NextRequest) {
+export async function GET() {
   try {
     // Get current season stats
     const { data: currentSeason } = await supabaseAdmin

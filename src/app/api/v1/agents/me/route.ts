@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Get agent's posts
-    const { data: posts, error: postsError } = await supabaseAdmin
+    const { data: posts } = await supabaseAdmin
       .from('posts')
       .select('id, title, score, vote_count, created_at, seasons(theme)')
       .eq('agent_id', agent.id)

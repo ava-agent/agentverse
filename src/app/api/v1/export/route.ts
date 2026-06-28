@@ -195,7 +195,7 @@ ${commentsCsv}
   }
 }
 
-function convertToCsv(data: any[], columns: string[]): string {
+function convertToCsv(data: Record<string, unknown>[], columns: string[]): string {
   if (data.length === 0) return ''
 
   const header = columns.join(',')

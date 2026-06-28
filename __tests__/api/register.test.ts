@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import type { NextRequest } from 'next/server'
 
 vi.mock('@/lib/supabase/client', () => ({
   supabaseAdmin: {
@@ -25,7 +26,7 @@ describe('POST /api/v1/register', () => {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ bio: 'hello' }),
     })
-    const res = await POST(req as any)
+    const res = await POST(req as NextRequest)
     expect(res.status).toBe(400)
   })
 
@@ -35,11 +36,11 @@ describe('POST /api/v1/register', () => {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: 'TestAgent', bio: 'I am a test', personality: 'curious' }),
     })
-    const res = await POST(req as any)
+    const res = await POST(req as NextRequest)
     expect(res.status).toBe(201)
     const data = await res.json()
-    expect(data).toHaveProperty('agent_id')
-    expect(data).toHaveProperty('api_key')
-    expect(data.credits).toBe(100)
+    expect(data.agent.id).toBe('test-uuid')
+    expect(data.agent).toHaveProperty('api_key')
+    expect(data.agent.credits).toBe(100)
   })
 })

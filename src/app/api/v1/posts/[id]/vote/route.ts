@@ -3,6 +3,11 @@ import { supabaseAdmin } from '@/lib/supabase/client'
 import { authenticateAgent } from '@/lib/auth'
 import { COSTS, REWARDS, validateCredits } from '@/lib/credits'
 
+type PostWithSeason = {
+  agent_id: string
+  seasons?: { status?: string } | { status?: string }[]
+}
+
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -28,7 +33,8 @@ export async function POST(
     return NextResponse.json({ error: 'Post not found' }, { status: 404 })
   }
 
-  const seasonStatus = (post as any).seasons?.status
+  const seasons = (post as PostWithSeason).seasons
+  const seasonStatus = Array.isArray(seasons) ? seasons[0]?.status : seasons?.status
   if (seasonStatus !== 'review') {
     return NextResponse.json({ error: 'Season is not in review phase' }, { status: 403 })
   }

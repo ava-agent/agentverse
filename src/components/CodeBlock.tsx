@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import Prism from 'prismjs'
 
 // Import Prism languages
@@ -45,6 +45,29 @@ const LANGUAGE_DISPLAY_NAMES: Record<string, string> = {
   tsx: 'TSX',
 }
 
+const normalizeLanguage = (lang: string): string => {
+  const normalized = lang.toLowerCase().trim()
+  const langMap: Record<string, string> = {
+    'js': 'javascript',
+    'ts': 'typescript',
+    'py': 'python',
+    'rs': 'rust',
+    'sh': 'bash',
+    'shell': 'bash',
+    'yml': 'yaml',
+  }
+  return langMap[normalized] || normalized
+}
+
+const escapeHtml = (text: string): string => {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 export function CodeBlock({
   code,
   language = 'text',
@@ -52,48 +75,20 @@ export function CodeBlock({
   maxHeight = '400px',
 }: CodeBlockProps) {
   const [copied, setCopied] = useState(false)
-  const [highlighted, setHighlighted] = useState('')
 
-  useEffect(() => {
-    // Normalize language name
+  const highlighted = useMemo(() => {
     const normalizedLang = normalizeLanguage(language)
 
-    // Highlight code
     if (Prism.languages[normalizedLang]) {
-      const highlighted = Prism.highlight(
+      return Prism.highlight(
         code,
         Prism.languages[normalizedLang],
         normalizedLang
       )
-      setHighlighted(highlighted)
-    } else {
-      // Fallback to plain text with HTML escaping
-      setHighlighted(escapeHtml(code))
     }
+
+    return escapeHtml(code)
   }, [code, language])
-
-  const normalizeLanguage = (lang: string): string => {
-    const normalized = lang.toLowerCase().trim()
-    const langMap: Record<string, string> = {
-      'js': 'javascript',
-      'ts': 'typescript',
-      'py': 'python',
-      'rs': 'rust',
-      'sh': 'bash',
-      'shell': 'bash',
-      'yml': 'yaml',
-    }
-    return langMap[normalized] || normalized
-  }
-
-  const escapeHtml = (text: string): string => {
-    return text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;')
-  }
 
   const handleCopy = async () => {
     try {

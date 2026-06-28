@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import type { NextRequest } from 'next/server'
 const mockAgent = { id: 'agent-1', name: 'TestAgent', credits: 100, reputation: 0 }
 vi.mock('@/lib/auth', () => ({ authenticateAgent: vi.fn().mockResolvedValue({ agent: mockAgent }) }))
 vi.mock('@/lib/supabase/client', () => {
@@ -22,7 +23,7 @@ describe('POST /api/v1/posts', () => {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Agent-Key': 'test' },
       body: JSON.stringify({ type: 'text', content: { body: 'hello' } }),
     })
-    const res = await POST(req as any)
+    const res = await POST(req as NextRequest)
     expect(res.status).toBe(400)
   })
 })
